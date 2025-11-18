@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Navigation Menu</title>
+    <link rel="stylesheet" href="navipage.css" />
+    <!-- Font Awesome for superb icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <!-- 1. The main container for the entire application layout -->
+    <div class="app-container">
+        
+        <!-- 2. Sidebar / Expanded Menu (Starts HIDDEN by default) -->
+        <nav class="sidebar sidebar-hidden" id="sidebar" aria-label="Primary Navigation" aria-expanded="false">
+            <div class="sidebar-account">
+                <div class="account-avatar" aria-label="User avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="account-info">
+                    <span class="account-name">John Doe</span>
+                    <span class="account-email">john@example.com</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="active"><a href="#" class="sidebar-link current-page"><i class="fas fa-compass icon-space"></i>Menu</a></li>
+                <li><a href="dashboard.html" class="sidebar-link"><i class="fas fa-th-large icon-space"></i>Dashboard</a></li>
+                <li><a href="livecam.html" class="sidebar-link"><i class="fas fa-video icon-space"></i>Live Cam Recording</a></li>
+                <li><a href="roomvideo.html" class="sidebar-link"><i class="fas fa-play-circle icon-space"></i>Play Saved Video</a></li>
+                <li><a href="captured.html" class="sidebar-link"><i class="fas fa-image icon-space"></i>Capture Images</a></li>
+                <li><a href="downloaded.html" class="sidebar-link"><i class="fas fa-download icon-space"></i>Downloaded Videos</a></li>
+            </ul>
+
+            <button class="logout-btn" aria-label="Logout">
+                <i class="fas fa-sign-out-alt icon-space"></i>Log out
+            </button>
+        </nav>
+
+
+        <!-- 3. Main Content Wrapper -->
+        <div class="main-content-wrapper">
+
+            <!-- 4. Top Navigation Bar (Always visible) -->
+            <header class="top-navbar" aria-label="Top navigation bar">
+                <!-- Menu Toggle Button -->
+                <button id="menu-toggle" class="menu-toggle-btn" aria-label="Toggle navigation menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Logo & Page Title -->
+                <div class="navbar-brand">
+                    <div class="logo-circle" aria-label="Logo"><i class="fas fa-shield-alt"></i></div>
+                    <div class="page-title">MAIN NAVIGATION</div>
+                </div>
+
+                <!-- User/Notification area -->
+                <div class="navbar-utility">
+                    <i class="fas fa-bell nav-icon"></i>
+                    <i class="fas fa-cog nav-icon"></i>
+                </div>
+            </header>
+
+            <!-- 5. Main Page Content -->
+            <main class="page-wrapper" role="main" aria-label="Application sections overview">
+                
+                <h1 class="nav-header">APPLICATION SECTIONS</h1>
+
+                <div class="nav-grid">
+                    
+                    <a href="dashboard.html" class="nav-card card-blue" aria-label="Go to Dashboard">
+                        <i class="fas fa-th-large nav-icon-card"></i>
+                        <span>Dashboard</span>
+                        <small>Overview of all monitored rooms and feeds.</small>
+                    </a>
+                    
+                    <a href="livecam.html" class="nav-card card-green" aria-label="Go to Live Cam Recording">
+                        <i class="fas fa-video nav-icon-card"></i>
+                        <span>Live Cam Recording</span>
+                        <small>Start and manage real-time video capture.</small>
+                    </a>
+                    
+                    <a href="roomvideo.html" class="nav-card card-orange" aria-label="Go to Play Saved Video">
+                        <i class="fas fa-play-circle nav-icon-card"></i>
+                        <span>Play Saved Video</span>
+                        <small>Review historical video footage.</small>
+                    </a>
+                    
+                    <a href="captured.html" class="nav-card card-purple" aria-label="Go to Captured Images">
+                        <i class="fas fa-image nav-icon-card"></i>
+                        <span>Captured Images</span>
+                        <small>Browse automatically captured still images.</small>
+                    </a>
+                    
+                    <a href="downloaded.html" class="nav-card card-red" aria-label="Go to Downloaded Videos">
+                        <i class="fas fa-download nav-icon-card"></i>
+                        <span>Downloaded Videos</span>
+                        <small>Manage and access local video backups.</small>
+                    </a>
+
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- 6. JavaScript Link -->
+    <script src="navipage.js"></script>
+</body>
+</html>

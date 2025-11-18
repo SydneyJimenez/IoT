@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Play Saved Video</title>
+    <link rel="stylesheet" href="roomvideo.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <nav class="sidebar sidebar-hidden" id="sidebar" aria-label="Primary Navigation" aria-expanded="false">
+            <div class="sidebar-account">
+                <div class="account-avatar" aria-label="User avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="account-info">
+                    <span class="account-name">John Doe</span>
+                    <span class="account-email">john@example.com</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li class="active"><a href="#" class="sidebar-link current-page"><i class="fas fa-compass icon-space"></i>Menu</a></li>
+                <li><a href="dashboard.html" class="sidebar-link"><i class="fas fa-th-large icon-space"></i>Dashboard</a></li>
+                <li><a href="livecam.html" class="sidebar-link"><i class="fas fa-video icon-space"></i>Live Cam Recording</a></li>
+                <li class="active"><a href="#" class="sidebar-link current-page"><i class="fas fa-play-circle icon-space"></i>Play Saved Video</a></li>
+                <li><a href="captured.html" class="sidebar-link"><i class="fas fa-image icon-space"></i>Capture Images</a></li>
+                <li><a href="downloaded.html" class="sidebar-link"><i class="fas fa-download icon-space"></i>Downloaded Videos</a></li>
+            </ul>
+
+            <button class="logout-btn" aria-label="Logout">
+                <i class="fas fa-sign-out-alt icon-space"></i>Log out
+            </button>
+        </nav>
+
+        <div class="main-content-wrapper">
+
+            <header class="top-navbar" aria-label="Top navigation bar">
+                <button id="menu-toggle" class="menu-toggle-btn" aria-label="Toggle navigation menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="navbar-brand">
+                    <div class="logo-circle" aria-label="Logo"><i class="fas fa-shield-alt"></i></div>
+                    <div class="page-title">PLAY SAVED VIDEO</div>
+                </div>
+
+                <div class="navbar-utility">
+                    <i class="fas fa-bell nav-icon"></i>
+                    <i class="fas fa-cog nav-icon"></i>
+                </div>
+            </header>
+
+            <div class="page-wrapper" role="main" aria-label="Room video playback page">
+                
+                <section class="video-container" aria-label="Video player in Room 1">
+                    <div class="video-label">VIDEO IN ROOM 1</div>
+
+                    <div class="video-player" tabindex="0" aria-label="Video playback area">
+                        <video id="videoPlayer" preload="metadata" aria-describedby="timeDisplay">
+                            <source src="sample_video.mp4" type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+
+                        </div>
+
+                    <div class="video-controls" aria-label="Video controls">
+                        <button id="btnPlayPause" class="control-btn" aria-label="Play or pause video"><i class="fas fa-play"></i></button>
+                        <button id="btnForward" class="control-btn" aria-label="Fast forward 10 seconds"><i class="fas fa-forward"></i></button>
+                        <span id="timeDisplay" class="time-text" aria-live="polite" aria-atomic="true">00:00 / 00:00</span>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="roomvideo.js"></script>
+</body>
+</html>

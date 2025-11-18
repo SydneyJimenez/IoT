@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login</title>
+  <link rel="stylesheet" href="login.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+</head>
+<body>
+
+  <div class="login-wrapper">
+    <div class="user-icon">
+      <i class="fa-regular fa-user"></i>
+    </div>
+    <h2 class="login-title">PROCTOR LOGIN</h2>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+        <input type="text" placeholder="Username" name="username" required />
+      </div>
+
+      <div class="input-group">
+        <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+        <input type="password" placeholder="Password" name="password" required />
+      </div>
+
+      <div class="options-row">
+        <label class="remember-me">
+          <input type="checkbox" name="remember" />
+          Remember me
+        </label>
+        <a href="#" class="forgot-password">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+     
+      window.location.href = 'dashboard.html';
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,349 @@
+/* Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body, html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    overflow: hidden; /* Prevent body scroll */
+    background: linear-gradient(to top, rgb(34, 34, 50), rgb(52, 65, 161));
+    color: white;
+    user-select: none;
+}
+
+/* ========================================================================= */
+/* 1. APP LAYOUT & MAIN CONTENT */
+/* ========================================================================= */
+.app-container {
+    display: flex; /* Simple layout flow */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Main Content Wrapper (Takes full width, sidebar slides over it) */
+.main-content-wrapper {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden; 
+    width: 100%;
+}
+
+/* ========================================================================= */
+/* 2. TOP NAVBAR */
+/* ========================================================================= */
+.top-navbar {
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px); /* Glassy effect */
+    flex-shrink: 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #ffaa00; 
+    color: #1b1b3a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+.navbar-utility {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-icon {
+    font-size: 20px;
+    color: #ccccff;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.nav-icon:hover {
+    color: #ffaa00;
+}
+
+.menu-toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+.menu-toggle-btn:hover {
+    color: #ffaa00;
+}
+
+.page-title {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #f0f0f0;
+    margin: 0;
+}
+
+/* ========================================================================= */
+/* 3. SIDEBAR (Hidden/Visible Menu) */
+/* ========================================================================= */
+.sidebar {
+    width: 260px; 
+    background-color: #1b1b3a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.8);
+    transition: transform 0.3s ease-in-out; /* Transition for sliding */
+    overflow-x: hidden; 
+    height: 100vh; 
+    position: fixed; /* Fixed position to slide over content */
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Default state: Visible */
+.sidebar:not(.sidebar-hidden) {
+    transform: translateX(0);
+}
+
+/* Hidden state: Pushed completely off-screen to the left */
+.sidebar-hidden {
+    transform: translateX(-100%); 
+}
+
+/* Sidebar elements */
+.sidebar-account {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.account-avatar {
+    width: 48px;
+    height: 48px;
+    background-color: #555577;
+    color: #ccccff;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.account-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.account-email {
+    font-size: 12px;
+    color: #bbb;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.icon-space {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-link {
+    text-decoration: none;
+    color: #ccccff;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: block;
+    white-space: nowrap;
+}
+
+.current-page {
+    background-color: #35355a !important;
+    color: #ffaa00 !important;
+    border-left: 3px solid #ffaa00;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+    background-color: #454575;
+    color: #ffaa00;
+    outline: none;
+}
+
+.logout-btn {
+    background-color: #881111;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: auto;
+    user-select: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.logout-btn:hover,
+.logout-btn:focus {
+    background-color: #b22222;
+    outline: none;
+}
+
+
+/* ========================================================================= */
+/* 4. MAIN PAGE CONTENT & VIDEO STYLES */
+/* ========================================================================= */
+
+.page-wrapper {
+    background: rgba(13, 9, 61, 0.8);
+    flex-grow: 1; 
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: white;
+    height: calc(100% - 80px); /* Full height minus top-navbar height and margin */
+    overflow-y: auto; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.video-container {
+    background-color: rgba(198, 198, 223, 0.9); 
+    border-radius: 12px;
+    padding: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+    color: black;
+}
+
+.video-label {
+    font-weight: 700;
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 15px;
+    user-select: none;
+}
+
+.video-player {
+    position: relative;
+    border-radius: 10px;
+    flex-grow: 1;
+    background-color: black;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+video#videoPlayer {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    display: block;
+    background-color: black;
+}
+
+/* Video controls bar */
+.video-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.control-btn {
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.1s;
+    color: #333;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.control-btn i {
+    font-size: 16px;
+}
+
+.control-btn:hover,
+.control-btn:focus {
+    color: white;
+    background-color: #ffaa00;
+    border-color: #ffaa00;
+    transform: scale(1.05);
+    outline: none;
+}
+
+.time-text {
+    font-family: 'Courier New', Courier, monospace;
+    letter-spacing: 1px;
+    background-color: #e0e0e0;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+}
+

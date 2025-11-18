@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proctoring Dashboard</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font family and dark theme styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Slate 900 (Deep Dark Blue) */
+            color: #f3f4f6;
+            min-height: 100vh;
+        }
+        /* Custom styles for the motion detection overlay */
+        #motion-alert {
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none;
+        }
+        /* Style for the video feed to match the dark aesthetic */
+        #live-video {
+            transform: scaleX(-1); /* Optional: Flip video horizontally for mirror effect */
+        }
+        /* Custom scrollbar for log container */
+        #log-container {
+            max-height: 24rem; /* 96 */
+            overflow-y: auto;
+        }
+        #log-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        #log-container::-webkit-scrollbar-thumb {
+            background-color: #374151; /* Gray 700 */
+            border-radius: 4px;
+        }
+        #log-container::-webkit-scrollbar-track {
+            background-color: #1f2937; /* Gray 800 */
+        }
+    </style>
+</head>
+<body class="pb-8">
+
+    <!-- Navbar/Header for consistent UI -->
+    <nav class="bg-gray-900 border-b border-indigo-500 shadow-xl sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-indigo-400">
+                        AI Proctoring Dashboard
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#gallery" id="nav-gallery" 
+                       class="px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-indigo-300 transition duration-150">
+                        Room Gallery
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- The main view container. Only one of these will be shown at a time via JavaScript. -->
+    <main id="app-container" class="max-w-7xl mx-auto p-4 md:p-8">
+        <!-- Content will be injected here -->
+        <div class="flex justify-center items-center h-48">
+            <p class="text-gray-400">Loading application...</p>
+        </div>
+    </main>
+
+    <!-- Modal for displaying captured images (since we cannot use alert()) -->
+    <div id="image-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4" onclick="this.classList.add('hidden')">
+        <div class="bg-gray-800 p-6 rounded-xl max-w-xl w-full shadow-2xl border border-red-600" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold mb-4 text-red-400">Suspicious Movement Detected!</h3>
+            <p class="mb-4 text-gray-300">An automated screenshot was captured due to significant movement in the monitored area. Click the image to close.</p>
+            <img id="modal-image" class="w-full rounded-lg shadow-xl mb-4 border border-red-500 cursor-pointer" alt="Captured Screenshot" onclick="document.getElementById('image-modal').classList.add('hidden')">
+            <button onclick="document.getElementById('image-modal').classList.add('hidden')" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-150 shadow-md">Close</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- CONFIGURATION ---
+        const ROOMS = [
+            { id: 101, name: "Exam Hall Alpha", preview: "https://placehold.co/400x250/3b82f6/ffffff?text=Room+101+Preview" },
+            { id: 102, name: "Lab Beta", preview: "https://placehold.co/400x250/10b981/ffffff?text=Room+102+Preview" },
+            { id: 201, name: "Lecture Wing C", preview: "https://placehold.co/400x250/f97316/ffffff?text=Room+201+Preview" },
+            { id: 203, name: "Testing Station D", preview: "https://placehold.co/400x250/ef4444/ffffff?text=Room+203+Preview" },
+            { id: 305, name: "Server Room E", preview: "https://placehold.co/400x250/8b5cf6/ffffff?text=Room+305+Preview" },
+            { id: 306, name: "Remote Pod F", preview: "https://placehold.co/400x250/14b8a6/ffffff?text=Room+306+Preview" },
+        ];
+
+        // Motion detection sensitivity (0 to 255). Lower value means more sensitive.
+        const THRESHOLD = 30;
+        // The number of difference pixels that must be exceeded to trigger an event.
+        const PIXEL_DIFFERENCE_COUNT = 500; 
+        // Delay between motion checks (in milliseconds)
+        const MOTION_INTERVAL = 100;
+        // Time to wait before logging another event (to prevent spamming, in ms)
+        const LOG_DEBOUNCE_TIME = 5000; 
+
+        // --- GLOBAL STATE ---
+        const appContainer = document.getElementById('app-container');
+        let videoStream = null;
+        let detectionIntervalId = null;
+        let lastFrameCanvas = null;
+        let motionLog = [];
+
+        // --- PAGE RENDERING & NAVIGATION ---
+
+        // Handles route changes (URL hash)
+        window.addEventListener('hashchange', render);
+        window.addEventListener('DOMContentLoaded', () => {
+            render();
+            // Redirect to gallery if no hash is present on load
+            if (!window.location.hash) {
+                window.location.hash = '#gallery';
+            }
+        });
+
+        // Main render function based on the current hash
+        function render() {
+            // Stop any running video streams or interval loops before switching views
+            stopVideoAndMotionDetection(); 
+
+            const hash = window.location.hash;
+
+            if (hash === '#gallery') {
+                renderGallery();
+            } else if (hash.startsWith('#room=')) {
+                const roomId = parseInt(hash.split('=')[1]);
+                const room = ROOMS.find(r => r.id === roomId);
+                if (room) {
+                    renderMonitoringPage(room);
+                } else {
+                    appContainer.innerHTML = '<h1 class="text-3xl font-bold text-red-500">Error: Room Not Found</h1><p class="text-gray-400">Returning to gallery...</p>';
+                    setTimeout(() => window.location.hash = '#gallery', 2000);
+                }
+            } else {
+                window.location.hash = '#gallery';
+            }
+        }
+
+        // --- PAGE 1: ROOM GALLERY ---
+        function renderGallery() {
+            document.title = "Proctoring Dashboard | Gallery";
+            const galleryHTML = `
+                <h1 class="text-3xl md:text-4xl font-extrabold mb-8 text-indigo-400">Exam Room Gallery</h1>
+                <p class="mb-8 text-gray-400">Select a room below to begin live motion monitoring.</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${ROOMS.map(room => `
+                        <div 
+                            class="room-card bg-gray-800 p-6 rounded-2xl shadow-2xl transition duration-300 transform hover:scale-[1.02] cursor-pointer border-2 border-gray-700 hover:border-indigo-500"
+                            onclick="window.location.hash = '#room=${room.id}'"
+                        >
+                            <img src="${room.preview}" alt="Preview for ${room.name}" onerror="this.onerror=null; this.src='https://placehold.co/400x250/475569/ffffff?text=No+Image'" class="w-full h-40 object-cover rounded-xl mb-4 border border-gray-700">
+                            <h2 class="text-xl font-bold text-gray-200">${room.name}</h2>
+                            <p class="text-sm text-indigo-400">Room ID: ${room.id}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            appContainer.innerHTML = galleryHTML;
+        }
+
+        // --- PAGE 2: ROOM MONITORING ---
+
+        function renderMonitoringPage(room) {
+            document.title = `Proctoring Dashboard | ${room.name}`;
+            motionLog = []; // Reset log for the new room
+
+            const monitoringHTML = `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-indigo-400 mb-4 sm:mb-0">${room.name} Live Monitoring</h1>
+                    <button onclick="window.location.hash='#gallery'" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-xl transition duration-150 shadow-md">
+                        &larr; Back to Gallery
+                    </button>
+                </div>
+                
+                <div class="lg:flex lg:space-x-8">
+                    <!-- Live Feed Area -->
+                    <div class="lg:w-2/3 mb-6 lg:mb-0 relative">
+                        <div class="aspect-video bg-gray-900 rounded-xl overflow-hidden shadow-2xl border-4 border-gray-700 relative">
+                            <video id="live-video" class="w-full h-full object-cover" autoplay muted playsinline></video>
+                            
+                            <!-- Motion Alert Overlay -->
+                            <div id="motion-alert" class="absolute inset-0 bg-red-800 opacity-0 flex items-center justify-center text-white text-2xl font-bold transition duration-150">
+                                🚨 SUSPICIOUS MOVEMENT DETECTED 🚨
+                            </div>
+
+                            <!-- Status Badge -->
+                            <div id="video-status" class="absolute top-0 left-0 bg-yellow-600 text-white text-xs px-3 py-1 m-3 rounded-full font-semibold shadow-lg">
+                                Connecting to Camera...
+                            </div>
+                        </div>
+                        <canvas id="motion-canvas" class="hidden"></canvas>
+                        <canvas id="screenshot-canvas" class="hidden"></canvas>
+                        <div class="mt-4 flex justify-between items-center text-sm text-gray-400 bg-gray-800 p-4 rounded-xl border border-gray-700">
+                            <span>Room ID: ${room.id}</span>
+                            <span>Current Motion Level: <span id="motion-level" class="font-bold text-indigo-400">0</span> / ${PIXEL_DIFFERENCE_COUNT}</span>
+                        </div>
+                    </div>
+
+                    <!-- Log and Screenshots Sidebar -->
+                    <div class="lg:w-1/3 bg-gray-800 p-6 rounded-2xl shadow-xl border-2 border-gray-700">
+                        <h2 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2 text-red-400">Incident Log</h2>
+                        <div id="log-container" class="space-y-3">
+                            <!-- Logs will be inserted here -->
+                            <p class="text-gray-500 italic">No suspicious events yet.</p>
+                        </div>
+
+                        <h2 class="text-xl font-bold mt-6 mb-4 border-b border-gray-700 pb-2 text-gray-200">Captured Screenshots</h2>
+                        <div id="screenshot-gallery" class="grid grid-cols-2 gap-3">
+                            <!-- Screenshots will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            `;
+            appContainer.innerHTML = monitoringHTML;
+            startVideoAndMotionDetection(room.id);
+        }
+
+        // --- WEBCAM AND MOTION DETECTION LOGIC ---
+
+        function stopVideoAndMotionDetection() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+            if (detectionIntervalId) {
+                clearInterval(detectionIntervalId);
+                detectionIntervalId = null;
+            }
+            lastFrameCanvas = null;
+        }
+
+        async function startVideoAndMotionDetection(roomId) {
+            const video = document.getElementById('live-video');
+            const status = document.getElementById('video-status');
+            const motionCanvas = document.getElementById('motion-canvas');
+
+            try {
+                // 1. Get Webcam Stream
+                status.textContent = "Accessing webcam...";
+                videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = videoStream;
+                
+                video.addEventListener('loadeddata', () => {
+                    // Update status text
+                    status.classList.remove('bg-yellow-600');
+                    status.classList.add('bg-green-600');
+                    status.textContent = "LIVE FEED";
+                    
+                    // Set canvas dimensions to match the video feed
+                    motionCanvas.width = video.videoWidth;
+                    motionCanvas.height = video.videoHeight;
+                    
+                    // Initialize the last frame canvas
+                    lastFrameCanvas = document.createElement('canvas');
+                    lastFrameCanvas.width = video.videoWidth;
+                    lastFrameCanvas.height = video.videoHeight;
+                    
+                    // Start the main detection loop
+                    detectionIntervalId = setInterval(() => detectMotion(video, motionCanvas, lastFrameCanvas, roomId), MOTION_INTERVAL);
+                }, { once: true });
+
+
+            } catch (error) {
+                console.error("Error accessing webcam: ", error);
+                // Update error status
+                status.classList.remove('bg-yellow-600', 'bg-green-600');
+                status.classList.add('bg-red-600');
+                status.textContent = "WEBCAM ERROR";
+                
+                // Show a user-friendly error message in the console and UI
+                const container = document.querySelector('.lg\\:w-2\\/3');
+                if (container) {
+                    const errorMsg = document.createElement('p');
+                    errorMsg.className = 'text-red-500 mt-4 font-bold text-center';
+                    errorMsg.textContent = 'Please allow camera access to start monitoring. You must refresh after granting permission.';
+                    container.appendChild(errorMsg);
+                }
+            }
+        }
+
+
+        // Core Motion Detection Logic (Frame Differencing)
+        function detectMotion(video, currentCanvas, lastCanvas, roomId) {
+            if (!video.srcObject) return;
+            
+            const width = video.videoWidth;
+            const height = video.videoHeight;
+            if (width === 0 || height === 0) return;
+
+            const ctxCurrent = currentCanvas.getContext('2d', { willReadFrequently: true });
+            const ctxLast = lastCanvas.getContext('2d', { willReadFrequently: true });
+            const alertDiv = document.getElementById('motion-alert');
+            const motionLevelSpan = document.getElementById('motion-level');
+            
+            // 1. Get the current frame
+            ctxCurrent.drawImage(video, 0, 0, width, height);
+            const currentFrameData = ctxCurrent.getImageData(0, 0, width, height);
+            
+            // If this is the very first frame, just capture it and exit
+            if (!lastCanvas.hasInitialFrame) {
+                ctxLast.drawImage(video, 0, 0, width, height);
+                lastCanvas.hasInitialFrame = true;
+                return;
+            }
+            
+            // 2. Get the previous frame data
+            const lastFrameData = ctxLast.getImageData(0, 0, width, height);
+            
+            let differencePixels = 0;
+            const dataCurrent = currentFrameData.data;
+            const dataLast = lastFrameData.data;
+            
+            // 3. Compare frames pixel by pixel
+            for (let i = 0; i < dataCurrent.length; i += 4) {
+                // Calculate average absolute color difference (R, G, B)
+                const diff = (
+                    Math.abs(dataCurrent[i] - dataLast[i]) + 
+                    Math.abs(dataCurrent[i+1] - dataLast[i+1]) + 
+                    Math.abs(dataCurrent[i+2] - dataLast[i+2])
+                ) / 3;
+
+                // Check if the difference exceeds the THRESHOLD
+                if (diff > THRESHOLD) {
+                    differencePixels++;
+                }
+            }
+
+            // 4. Update UI and check for suspicious movement
+            motionLevelSpan.textContent = differencePixels;
+
+            if (differencePixels > PIXEL_DIFFERENCE_COUNT) {
+                // Movement detected
+                alertDiv.style.opacity = '0.7';
+                handleSuspiciousMovement(roomId, currentCanvas.toDataURL('image/png'));
+            } else {
+                // No movement
+                alertDiv.style.opacity = '0';
+            }
+
+            // 5. Update the last frame for the next comparison
+            ctxLast.putImageData(currentFrameData, 0, 0); 
+        }
+
+        // --- INCIDENT HANDLING ---
+
+        function handleSuspiciousMovement(roomId, imageDataUrl) {
+            const timestamp = new Date();
+
+            // Debounce check: Limit to one capture every LOG_DEBOUNCE_TIME
+            const lastLog = motionLog.length > 0 ? motionLog[motionLog.length - 1] : null;
+            if (lastLog && (timestamp - lastLog.fullTime) < LOG_DEBOUNCE_TIME) {
+                return;
+            }
+            
+            const logEntry = {
+                roomId: roomId,
+                time: timestamp.toLocaleTimeString(),
+                date: timestamp.toLocaleDateString(),
+                fullTime: timestamp,
+                imageDataUrl: imageDataUrl
+            };
+
+            motionLog.push(logEntry);
+            console.log(`[Suspicious Event] Room ${roomId} at ${logEntry.time}`);
+            
+            // 1. Capture and Display Screenshot (using the image data URL we already created)
+            displayCapturedImage(logEntry);
+
+            // 2. Update Incident Log
+            updateLogDisplay(logEntry);
+        }
+
+        function displayCapturedImage(logEntry) {
+            const modal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            const gallery = document.getElementById('screenshot-gallery');
+
+            // Show the image in the Modal
+            modalImage.src = logEntry.imageDataUrl;
+            modal.classList.remove('hidden');
+            
+            // Add the image to the Screenshot Gallery
+            const imgElement = document.createElement('img');
+            imgElement.src = logEntry.imageDataUrl;
+            imgElement.alt = `Capture at ${logEntry.time}`;
+            imgElement.className = 'w-full h-auto rounded-lg shadow-lg cursor-pointer border-2 border-red-500 hover:opacity-80 transition duration-150';
+            imgElement.onclick = () => {
+                modalImage.src = logEntry.imageDataUrl;
+                modal.classList.remove('hidden');
+            };
+            gallery.prepend(imgElement); // Add the newest capture to the top
+        }
+        
+        function updateLogDisplay(logEntry) {
+            const logContainer = document.getElementById('log-container');
+            const firstChild = logContainer.querySelector('p.text-gray-500');
+            
+            // Remove initial "No events" message if present
+            if (firstChild && firstChild.textContent.includes('No suspicious events')) {
+                logContainer.innerHTML = '';
+            }
+
+            const logElement = document.createElement('div');
+            logElement.className = 'bg-red-900/50 p-3 rounded-lg border border-red-700 shadow-md';
+            logElement.innerHTML = `
+                <p class="font-bold text-red-300">INCIDENT: High Motion Detected</p>
+                <p class="text-sm text-gray-300">Time: ${logEntry.time}</p>
+                <p class="text-xs text-red-200 mt-1">Screenshot captured for review.</p>
+            `;
+            logContainer.prepend(logElement); // Add the newest log to the top
+            
+            // Scroll to top to see the newest log
+            logContainer.scrollTop = 0;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: linear-gradient(to top, rgb(34, 34, 50), rgb(52, 65, 161));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-wrapper {
+  background: transparent;
+  width: 320px;
+  text-align: center;
+  color: white;
+}
+
+/* User icon */
+.user-icon {
+  font-size: 72px;
+  margin-bottom: 15px;
+  opacity: 0.85;
+}
+
+/* Title */
+.login-title {
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 25px;
+  letter-spacing: 0.05em;
+}
+
+/* Input groups */
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 18px;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 14px 12px 42px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  color: #333;
+  background-color: white;
+  transition: box-shadow 0.3s ease;
+}
+
+input::placeholder {
+  color: #bbb;
+}
+
+/* Focus effect */
+input[type="text"]:focus,
+input[type="password"]:focus {
+  box-shadow: 0 0 0 3px #ffa500a8; /* orange glow */
+}
+
+/* Options row */
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: white;
+  margin-bottom: 30px;
+  user-select: none;
+}
+
+.options-row a,
+.options-row label {
+  cursor: pointer;
+  opacity: 0.85;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.options-row a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+input[type="checkbox"] {
+  margin-right: 6px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* Login button */
+.login-btn {
+  background-color: #f68b1e; /* orange */
+  border: none;
+  width: 100%;
+  padding: 14px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  user-select: none;
+}
+
+.login-btn:hover {
+  background-color: #d97714; /* darker orange */
+}

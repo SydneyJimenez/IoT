@@ -1,0 +1,359 @@
+/* Reset & Base Styles (Copied from roomvideo.css) */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body, html {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100%;
+    overflow: hidden; /* Prevent body scroll */
+    background: linear-gradient(to top, rgb(34, 34, 50), rgb(52, 65, 161));
+    color: white;
+    user-select: none;
+}
+
+/* ========================================================================= */
+/* 1. APP LAYOUT & MAIN CONTENT (Copied from roomvideo.css) */
+/* ========================================================================= */
+.app-container {
+    display: flex; /* Simple layout flow */
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.main-content-wrapper {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: 100vh;
+    overflow: hidden; 
+    width: 100%;
+}
+
+/* ========================================================================= */
+/* 2. TOP NAVBAR (Copied from roomvideo.css) */
+/* ========================================================================= */
+.top-navbar {
+    background-color: rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px); 
+    flex-shrink: 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-circle {
+    width: 40px;
+    height: 40px;
+    background-color: #ffaa00; 
+    color: #1b1b3a;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+}
+
+.navbar-utility {
+    display: flex;
+    gap: 20px;
+}
+
+.nav-icon {
+    font-size: 20px;
+    color: #ccccff;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.nav-icon:hover {
+    color: #ffaa00;
+}
+
+.menu-toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+.menu-toggle-btn:hover {
+    color: #ffaa00;
+}
+
+.page-title {
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: #f0f0f0;
+    margin: 0;
+}
+
+/* ========================================================================= */
+/* 3. SIDEBAR (Copied from roomvideo.css) */
+/* ========================================================================= */
+.sidebar {
+    width: 260px; 
+    background-color: #1b1b3a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.8);
+    transition: transform 0.3s ease-in-out; 
+    overflow-x: hidden; 
+    height: 100vh; 
+    position: fixed; 
+    left: 0;
+    top: 0;
+    z-index: 1000;
+}
+
+.sidebar:not(.sidebar-hidden) {
+    transform: translateX(0);
+}
+
+.sidebar-hidden {
+    transform: translateX(-100%); 
+}
+
+.sidebar-account {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.account-avatar {
+    width: 48px;
+    height: 48px;
+    background-color: #555577;
+    color: #ccccff;
+    border-radius: 50%;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.account-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.account-email {
+    font-size: 12px;
+    color: #bbb;
+}
+
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.icon-space {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-link {
+    text-decoration: none;
+    color: #ccccff;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: block;
+    white-space: nowrap;
+}
+
+.current-page {
+    background-color: #35355a !important;
+    color: #ffaa00 !important;
+    border-left: 3px solid #ffaa00;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+    background-color: #454575;
+    color: #ffaa00;
+    outline: none;
+}
+
+.logout-btn {
+    background-color: #881111;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: auto;
+    user-select: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+}
+
+.logout-btn:hover,
+.logout-btn:focus {
+    background-color: #b22222;
+    outline: none;
+}
+
+
+/* ========================================================================= */
+/* 4. DASHBOARD CONTENT STYLES (New/Enhanced) */
+/* ========================================================================= */
+
+.page-wrapper {
+    background: rgba(13, 9, 61, 0.8);
+    flex-grow: 1; 
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    height: calc(100% - 80px); 
+    overflow-y: auto; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.rooms-header {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 40px;
+    color: #ccccff;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #ffaa00;
+    padding-bottom: 8px;
+}
+
+.rooms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    padding: 10px;
+}
+
+.room-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 20px;
+    color: #1b1b3a;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+    border: 3px solid transparent;
+    min-height: 150px;
+}
+
+.room-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.5);
+    border-color: #ffaa00;
+    background-color: #ffffff;
+}
+
+.room-icon {
+    font-size: 36px;
+    color: #3f51b5; /* Blue */
+    margin-bottom: 10px;
+}
+
+.room-card span {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.room-card small {
+    font-size: 12px;
+    font-weight: 500;
+    color: #666;
+    text-transform: uppercase;
+}
+
+/* Specific Card Styles */
+.room-card-lg {
+    grid-column: span 2; /* Make it span two columns on large screens */
+    background: linear-gradient(135deg, #ffaa00, #ffc107);
+    color: #1b1b3a;
+}
+.room-card-lg .room-icon {
+    color: #1b1b3a;
+}
+.room-card-lg small {
+    color: #6d4c00;
+    font-weight: 600;
+}
+
+.room-offline {
+    background-color: #ffcccc; /* Reddish for error */
+    color: #881111;
+    border-color: #ff4444;
+}
+.room-offline .room-icon {
+    color: #ff4444;
+}
+.room-offline small {
+    color: #881111;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .rooms-grid {
+        grid-template-columns: 1fr; /* Single column layout */
+    }
+    .room-card-lg {
+        grid-column: span 1; /* Reset large card to span only 1 column */
+    }
+    .main-content-wrapper {
+        padding: 10px;
+    }
+    .top-navbar {
+        padding: 0 15px;
+    }
+}

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Live Cam Recording</title>
+    <link rel="stylesheet" href="livecam.css" />
+    <!-- Font Awesome for superb icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Sidebar / Expanded Menu -->
+        <nav class="sidebar sidebar-hidden" id="sidebar" aria-label="Primary Navigation" aria-expanded="false">
+            <div class="sidebar-account">
+                <div class="account-avatar" aria-label="User avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="account-info">
+                    <span class="account-name">John Doe</span>
+                    <span class="account-email">john@example.com</span>
+                </div>
+            </div>
+
+            <ul class="sidebar-nav">
+                <li><a href="navipage.html" class="sidebar-link"><i class="fas fa-compass icon-space"></i>Menu</a></li>
+                <li><a href="dashboard.html" class="sidebar-link"><i class="fas fa-th-large icon-space"></i>Dashboard</a></li>
+                <li class="active"><a href="#" class="sidebar-link current-page"><i class="fas fa-video icon-space"></i>Live Cam Recording</a></li>
+                <li><a href="roomvideo.html" class="sidebar-link"><i class="fas fa-play-circle icon-space"></i>Play Saved Video</a></li>
+                <li><a href="captured.html" class="sidebar-link"><i class="fas fa-image icon-space"></i>Capture Images</a></li>
+                <li><a href="downloaded.html" class="sidebar-link"><i class="fas fa-download icon-space"></i>Downloaded Videos</a></li>
+                
+            </ul>
+
+            <button class="logout-btn" aria-label="Logout">
+                <i class="fas fa-sign-out-alt icon-space"></i>Log out
+            </button>
+        </nav>
+
+        <!-- Main Content Wrapper -->
+        <div class="main-content-wrapper">
+
+            <!-- Top Navigation Bar -->
+            <header class="top-navbar" aria-label="Top navigation bar">
+                <button id="menu-toggle" class="menu-toggle-btn" aria-label="Toggle navigation menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="navbar-brand">
+                    <div class="logo-circle" aria-label="Logo"><i class="fas fa-shield-alt"></i></div>
+                    <div class="page-title">LIVE CAM RECORDING</div>
+                </div>
+
+                <div class="navbar-utility">
+                    <i class="fas fa-bell nav-icon"></i>
+                    <i class="fas fa-cog nav-icon"></i>
+                </div>
+            </header>
+
+            <!-- Main Page Content -->
+            <main class="page-wrapper" role="main" aria-label="Live camera recording interface">
+                
+                <h1 class="main-header">LIVE CAM RECORDING</h1>
+                
+                <!-- Recording Module Container -->
+                <div class="recording-module" id="recordingModule">
+                    
+                    <!-- Placeholder for Logo/Room Identifier -->
+                    <div class="module-header">
+                        <div class="logo-placeholder">Logo</div>
+                    </div>
+
+                    <!-- Video Feed Area -->
+                    <div class="video-feed-area">
+                        <div class="recording-indicator" id="recIndicator">
+                            <span class="rec-dot"></span> 
+                            <span id="recTime">00:00</span>
+                        </div>
+                        
+                        <div class="video-feed-placeholder">
+                            <i class="fas fa-video-camera large-icon"></i>
+                            <span class="text-label">VIDEO FEED</span>
+                        </div>
+                        
+                        <div class="overlay-info">
+                            <span id="dateDisplay"></span>
+                            <span id="timeDisplay"></span>
+                        </div>
+                        
+                        <div class="video-playback-icon" id="videoPlaybackIcon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons (Visibility controlled by JS) -->
+                    <div class="control-panel">
+                        
+                        <!-- IDLE / STOPPED State -->
+                        <button id="btnStartPrimary" class="control-btn btn-green" data-state="idle">
+                            <i class="fas fa-play icon-space"></i> START RECORDING
+                        </button>
+
+                        <!-- RECORDING / PAUSED States -->
+                        <div id="recordingControls" class="control-group hidden">
+                            <!-- Pause/Resume Button (Yellow) -->
+                            <button id="btnPause" class="control-btn btn-yellow">
+                                <i class="fas fa-pause icon-space"></i> PAUSE RECORDING
+                            </button>
+                        
+                            <!-- Finish Button (Blue) -->
+                            <button id="btnFinish" class="control-btn btn-blue">
+                                <i class="fas fa-stop icon-space"></i> FINISH RECORDING
+                            </button>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <script src="livecam.js"></script>
+</body>
+</html>
